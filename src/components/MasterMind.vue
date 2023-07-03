@@ -1,66 +1,82 @@
 <template>
     <p></p>
     <div class="container">
-
-        <div class="card">
-
-            <div class="card-header">
-                <h1 class="card-title">Game Console</h1>
-            </div>
-
-            <div class="card-body">
-                <div class="form-group">
-                    <h4>Wins:<span class="badge bg-primary" style="color:red">{{statistics.wins}}</span>of<span class="badge bg-primary" style="color:#ff0000">{{total}}</span> </h4>
-                    <h4>Loses:<span class="badge bg-success" style="color:red">{{statistics.loses}}</span>of<span class="badge bg-primary" style="color:red">{{total}}</span> </h4>
-                    <h4>Level:<span class="badge bg-success" style="color:blue">{{game.level}}</span></h4>
-                    <h4>Tries:<span class="badge bg-danger" style="color:green">{{game.tries}}</span> <span
-                            class="table-striped" style="color: green">of</span><span class="badge bg-warning"></span>{{game.maxTriesTries}}
-                    </h4>
-                    <h4>Lives:<span class="badge bg-info" style="color:green">{{game.lives}}</span></h4>
-
+        <BootstrapModalDialog :dialog-text="`You have already used the guess (${this.game.guess})!`"
+                              :close-dialog="closeDialog"
+                              :visible="isDialogVisible"
+                              dialog-title="Alert"></BootstrapModalDialog>
+        <BootstrapCard>
+            <BootstrapCardHeader header="Game Console"/>
+            <BootstrapCardBody>
+                <div class="mb-1">
+                    <BootstrapLabel value="Wins:"/>
+                    <BootstrapBadge color="badge bg-primary" :value="statistics.wins"/>
+                    of
+                    <BootstrapBadge color="bg-success" :value="total"/>
                 </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="guess">Guess:</label>
-                    <button class="btn btn-success"
-                            @click="play">Play
-                    </button>
-                    <input type="text" class="form-control" v-model="game.guess">
-
-
-
+                <div class="mb-1">
+                    <BootstrapLabel value="Loses:"/>
+                    <BootstrapBadge color="bg-secondary" :value="statistics.loses"/>
+                    of
+                    <BootstrapBadge color="bg-success" :value="total"/>
                 </div>
-
-                <div class="form-group">
-                    <table class="table table-bordered table-hover table-striped">
-                        <thead>
-                        <tr>
-                            <th>No-</th>
-                            <th>Guess-</th>
-                            <th>Evaluation-</th>
-
-
-                        </tr>
-                        </thead>
+                <div class="mb-1">
+                    <BootstrapLabel value="Game Level:"/>
+                    <BootstrapBadge color="bg-success" :value="game.level"/>
+                </div>
+                <div class="mb-1" v-if="game.tries === 0">
+                    <BootstrapBadge color="bg-info" value="NEW GAME"/>
+                </div>
+                <div class="mb-1" v-if="game.tries > 0">
+                    <BootstrapLabel value="Tries:"/>
+                    <BootstrapBadge color="bg-danger" :value="game.tries"/>
+                    of
+                    <BootstrapBadge color="bg-warning" :value="game.maxTries"/>
+                </div>
+                <div class="mb-1">
+                    <BootstrapProgressBar :value="game.counter" label="Time:" :color="progressBarColor"/>
+                </div>
+                <div class="mb-3">
+                    <BootstrapLabel value="Lives:"/>
+                    <BootstrapBadge color="badge bg-info" :value="game.lives"/>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label card-text mb-2" for="guess">Guess:</label>
+                    <input type="text" class="form-control mb-2" v-model="game.guess">
+                    <button class="btn btn-success" @click="play">Play</button>
+                </div>
+                <p></p>
+                <div class="mb-3">
+                    <BootstrapTable v-if="game.moves.length > 0">
+                        <BootstrapTableHeader :headers="['Move No', 'Guess', 'Evaluation']"></BootstrapTableHeader>
                         <tbody>
-                        <tr v-for="move in game.moves" :key="move.guess">
-                            <th></th>
-                            <th>{{move.guess}}</th>
-                            <th>{{move.evaluation}}</th>
-
+                        <tr v-for="(move,index) in game.moves" :key="move.guess">
+                            <td>{{ index + 1 }}</td>
+                            <td>{{ move.guess }}</td>
+                            <td>
+                                <MasterMindEvaluation :move="move"></MasterMindEvaluation>
+                            </td>
                         </tr>
                         </tbody>
-                    </table>
+                    </BootstrapTable>
                 </div>
-
-            </div>
-
-        </div>
-
+            </BootstrapCardBody>
+        </BootstrapCard>
     </div>
 </template>
 
 <script>
+
+    import BootstrapBadge from "@/components/BootstrapBadge";
+    import BootstrapLabel from "@/components/BootstrapLabel";
+    import BootstrapProgressBar from "@/components/BootstrapProgressBar";
+    import BootstrapTable from "@/components/BootstrapTable";
+    import BootstrapTableHeader from "@/components/BootstrapTableHeader";
+    import BootstrapCardHeader from "@/components/BootstrapCardHeader";
+    import MasterMindEvaluation from "@/components/MasterMindEvaluation";
+    import BootstrapModalDialog from "@/components/BootstrapModalDialog";
+    import BootstrapCard from "@/components/BootstrapCard";
+    import BootstrapCardBody from "@/components/BootstrapCardBody";
     import Move from "@/model/move";
 
     export default {
