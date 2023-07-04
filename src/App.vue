@@ -1,14 +1,17 @@
 <template>
-  <MasterMind/>
+  <p></p>
+  <div class="container">
+    <router-view></router-view>
+  </div>
 </template>
 
 <script>
-import MasterMind from './components/MasterMind.vue'
+
 
 export default {
   name: 'App',
   components: {
-    MasterMind
+    
   }
 }
 </script>
